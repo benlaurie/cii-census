@@ -1,0 +1,3 @@
+Debian_Package,git_repo
+libxml2,git://git.gnome.org/libxml2
+libfreetype6,git://git.sv.nongnu.org/freetype/freetype2.git
