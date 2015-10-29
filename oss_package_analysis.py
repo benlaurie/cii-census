@@ -111,7 +111,7 @@ def remove_non_ascii(text_list):
   '''Remove non-ascii chars from a list of strings'''
   for value in text_list:
     if value is not None:
-      new_value = ''.join([i if ord(i) < 128 else ' ' for i in value])
+      new_value = ''.join([i if ord(i) < 128 and ord(i) > 32 else ' ' for i in value])
       text_list[text_list.index(value)] = new_value.strip()
   return text_list
 
