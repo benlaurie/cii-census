@@ -411,8 +411,8 @@ def main():
 
   # Write the headers row
   with open('results.csv', 'w') as csvfile:
-    headerwriter = csv.writer(csvfile, delimiter=',')
-    headerwriter.writerow(['project_name', 'debian_source', 'debian_version',
+    writer = csv.writer(csvfile, delimiter=',')
+    writer.writerow(['project_name', 'debian_source', 'debian_version',
           'debian_desc', 'debian_home', 'CVE_since_2010', 'CVE_page', 'openhub_page',
           'openhub_name', 'openhub_desc', 'openhub_home', 'openhub_download',
           'twelve_month_contributor_count', 'total_contributor_count', 'total_code_lines',
@@ -421,23 +421,21 @@ def main():
           'direct_network_exposure', 'process_network_data', 'potential_privilege_escalation',
           'risk_index(max = 15)', 'risk_index components', 'comment_on_priority'])
 
-  # Add each package results into the csv file
-  csvfile = open('results.csv', 'a')
-  resultwriter = csv.writer(csvfile, delimiter=',')
-  for p in package_list:
-    row = [p.package_name, p.debian_source, p.debian_version,
-           p.debian_desc, p.debian_home, p.cve_since_2010, p.cve_page,  p.openhub_page,
-           p.openhub_name, p.openhub_desc, p.openhub_home, p.openhub_download,
-           p.twelve_month_contributor_count, p.total_contributor_count, p.total_code_lines,
-           p.main_language, p.licenses, p.fact_activity, p.fact_age, p.fact_comments,
-           p.fact_team_size, p.popularity['popularity'], p.implemented, p.role,
-           p.direct_network_exposure, p.process_network_data, p.potential_privilege_escalation,
-           p.risk_index, 'Website points: ' + str(p.website_points) +
-           ', CVE: ' + str(p.CVE_points) + ', 12-month contributor: ' +
-           str(p.recent_contributor_points) + ', Popularity: ' + str(p.popularity_points) +
-           ', Language: ' + str(p.language_points) + ', Exposure: ' + str(p.exposure_points) +
-           ' , Data only: ' + str(p.data_only_points), p.comment_on_priority]
-    resultwriter.writerow(remove_non_ascii(row))
+    # Add each package results into the csv file
+    for p in package_list:
+       row = [p.package_name, p.debian_source, p.debian_version,
+              p.debian_desc, p.debian_home, p.cve_since_2010, p.cve_page,  p.openhub_page,
+              p.openhub_name, p.openhub_desc, p.openhub_home, p.openhub_download,
+              p.twelve_month_contributor_count, p.total_contributor_count, p.total_code_lines,
+              p.main_language, p.licenses, p.fact_activity, p.fact_age, p.fact_comments,
+              p.fact_team_size, p.popularity['popularity'], p.implemented, p.role,
+              p.direct_network_exposure, p.process_network_data, p.potential_privilege_escalation,
+              p.risk_index, 'Website points: ' + str(p.website_points) +
+              ', CVE: ' + str(p.CVE_points) + ', 12-month contributor: ' +
+              str(p.recent_contributor_points) + ', Popularity: ' + str(p.popularity_points) +
+              ', Language: ' + str(p.language_points) + ', Exposure: ' + str(p.exposure_points) +
+              ' , Data only: ' + str(p.data_only_points), p.comment_on_priority]
+       writer.writerow(remove_non_ascii(row))
 
 if __name__ == "__main__":
   main()
