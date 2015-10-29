@@ -236,7 +236,7 @@ class Oss_Package(object):
         try:
           cache_data(url, filename)
         except:
-          print('Could not get OpenHub data for' + self.package_name)
+          print('Could not get OpenHub data for ' + self.package_name)
           return 1
 
       tree = ET.parse(filename)
@@ -305,7 +305,7 @@ class Oss_Package(object):
         print('Could not get CVE data for' + self.package_name)
         return 1
 
-    soup = BeautifulSoup(open(filename))
+    soup = BeautifulSoup(open(filename), 'lxml')
     cve_numbers = soup.find_all(href=re.compile('CVE-201'))
     self.cve_since_2010 = str(len(cve_numbers))
     self.cve_page = url
@@ -382,7 +382,7 @@ def main():
     print('[*] No Openhub API key was provided. \
           Will only use cached data (if available).')
   else:
-    file = open('openhub_key.txt', 'r')
+    f = open('openhub_key.txt', 'r')
     openhub_api_key = f.readline().strip()
 
   # Dict instance of projects and their ranks, popularity counts
