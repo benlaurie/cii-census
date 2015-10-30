@@ -33,11 +33,11 @@
 from __future__ import print_function
 from __future__ import absolute_import, division
 try:
-   xrange = xrange
-   # We have Python 2
+  xrange = xrange
+  # We have Python 2
 except:
-   xrange = range
-   # We have Python 3
+  xrange = range
+  # We have Python 3
 # From here on use "xrange", not "range".
 
 import urllib
@@ -60,13 +60,13 @@ debian_include = ['Source:', 'Version:', 'Description:', 'Homepage:']
 
 
 def file_accessible(filename, mode):
-    ''' Check if a file exists and is accessible. '''
-    try:
-        f = open(filename, mode)
-        f.close()
-    except IOError as e:
-        return False
-    return True
+  ''' Check if a file exists and is accessible. '''
+  try:
+    f = open(filename, mode)
+    f.close()
+  except IOError as e:
+    return False
+  return True
 
 
 def get_projects_to_analyze(filename):
