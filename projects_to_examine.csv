@@ -8,7 +8,7 @@ apt-listchanges,,8066,apt-listchanges,, package change history notification tool
 apt-utils,apt,apt,apt,, package managment related utility programs,Standard System Utilities,0,1,0,"Should primarily be managing data from trusted source; if it ensures data source okay, less risky.",
 aptitude,,aptitude,aptitude,, terminal-based package manager,Standard System Utilities,0,0,0,,
 aptitude-common,aptitude,aptitude,aptitude,, architecture indepedent files for the aptitude package manager,Standard System Utilities,0,0,0,,
-at,,at,at,, Delayed job execution and batch processing,Standard System Utilities,0,0,1,Could potentially enable local privilege escalation.,"Debian is the upstream, maintainer is looking for replacement http://anonscm.debian.org/cgit/collab-maint/at.git"
+at,,,at,, Delayed job execution and batch processing,Standard System Utilities,0,0,1,Could potentially enable local privilege escalation.,"Debian is the upstream, maintainer is looking for replacement http://anonscm.debian.org/cgit/collab-maint/at.git"
 base-files,,,base-files,, Debian base system miscellaneous files,Standard System Utilities,0,0,0,,
 base-passwd,,passwd,passwd,, Debian base system master password and group files,Standard System Utilities,0,0,1,,
 bash,,bash,bash,, GNU Bourne Again SHell,Standard System Utilities,0,0,0,,
