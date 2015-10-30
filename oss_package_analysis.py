@@ -200,8 +200,30 @@ class Oss_Package(object):
 
     self.popularity = debian_pop.get(package_name, {'rank': 1e6, 'popularity': ''})
     self.get_openhub_data(openhub_lookup_name)
+    self.repo = ''
+    self.get_repo(openhub_lookup_name)
     self.get_cve_debian()
     self.get_risk_index()
+
+  def get_repo(self, openhub_lookup_name):
+    if openhub_lookup_name != '':
+      # Results are saved. Store data if it's not in the cache
+      filename = 'openhub_cache/' + openhub_lookup_name + '.enlistments'
+      if os.path.isfile(filename) == False:
+        url = 'https://www.openhub.net/projects/' + openhub_lookup_name + \
+              '/enlistments'
+        try:
+          cache_data(url, filename)
+        except:
+          print('Could not get OpenHub repo data for ' + self.package_name)
+          return 1
+
+      soup = BeautifulSoup(open(filename), 'lxml')
+      repos = soup.find_all('td', class_='col-md-4')
+      #for r in repos:
+      #   print(r.text)
+      if repos:
+         self.repo = repos[0].text
 
   def get_openhub_data(self, openhub_lookup_name):
     '''Get project details from https://www.openhub.net/'''
@@ -229,9 +251,9 @@ class Oss_Package(object):
       self.openhub_page = 'https://www.openhub.net/projects/' + openhub_lookup_name
 
       # Results are saved. Store data if it's not in the cache
-      filename = 'openhub_cache/'+openhub_lookup_name + '.xml'
+      filename = 'openhub_cache/' + openhub_lookup_name + '.xml'
       if os.path.isfile(filename) == False:
-        url = 'https://www.openhub.net/projects/' + openhub_lookup_name +\
+        url = 'https://www.openhub.net/projects/' + openhub_lookup_name + \
               '.xml?api_key=' + openhub_api_key
         try:
           cache_data(url, filename)
@@ -413,13 +435,13 @@ def main():
   with open('results.csv', 'w') as csvfile:
     writer = csv.writer(csvfile, delimiter=',')
     writer.writerow(['project_name', 'debian_source', 'debian_version',
-          'debian_desc', 'debian_home', 'CVE_since_2010', 'CVE_page', 'openhub_page',
-          'openhub_name', 'openhub_desc', 'openhub_home', 'openhub_download',
-          'twelve_month_contributor_count', 'total_contributor_count', 'total_code_lines',
-          'main_language_name', 'licenses', 'fact_activity', 'fact_age', 'fact_comments',
-          'fact_team_size', 'package_popularity', 'implemented_in', 'role',
-          'direct_network_exposure', 'process_network_data', 'potential_privilege_escalation',
-          'risk_index(max = 15)', 'risk_index components', 'comment_on_priority'])
+                     'debian_desc', 'debian_home', 'CVE_since_2010', 'CVE_page', 'openhub_page',
+                     'openhub_name', 'openhub_desc', 'openhub_home', 'openhub_download',
+                     'twelve_month_contributor_count', 'total_contributor_count', 'total_code_lines',
+                     'main_language_name', 'licenses', 'fact_activity', 'fact_age', 'fact_comments',
+                     'fact_team_size', 'package_popularity', 'implemented_in', 'role',
+                     'direct_network_exposure', 'process_network_data', 'potential_privilege_escalation',
+                     'risk_index(max = 15)', 'risk_index components', 'comment_on_priority', 'repo'])
 
     # Add each package results into the csv file
     for p in package_list:
@@ -434,7 +456,8 @@ def main():
               ', CVE: ' + str(p.CVE_points) + ', 12-month contributor: ' +
               str(p.recent_contributor_points) + ', Popularity: ' + str(p.popularity_points) +
               ', Language: ' + str(p.language_points) + ', Exposure: ' + str(p.exposure_points) +
-              ' , Data only: ' + str(p.data_only_points), p.comment_on_priority]
+              ' , Data only: ' + str(p.data_only_points), p.comment_on_priority,
+              p.repo]
        writer.writerow(remove_non_ascii(row))
 
 if __name__ == "__main__":
