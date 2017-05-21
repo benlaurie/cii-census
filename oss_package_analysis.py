@@ -294,7 +294,8 @@ class Oss_Package(object):
     else:
       lookup = self.package_name
     filename = 'debian_cve/' + lookup + '.html'
-    url = 'https://security-tracker.debian.org/tracker/source-package/'+lookup
+    url = 'https://security-tracker.debian.org/tracker/source-package/' + lookup
+    print(url)
     if os.path.isfile(filename) == False:
       try:
         cache_data(url, filename)
@@ -303,9 +304,17 @@ class Oss_Package(object):
         return 1
 
     soup = BeautifulSoup(open(filename))
-    cve_numbers = soup.find_all(href=re.compile('CVE-201'))
+    cve_numbers = soup.find_all(href=re.compile('CVE-201[567]'))
     self.cve_since_2010 = str(len(cve_numbers))
     self.cve_page = url
+
+    s2 = BeautifulSoup(open(filename), 'html.parser')
+    o = s2.find('h2', string='Open issues')
+    if o:
+      open_cve = o.next_sibling.find_all(href=re.compile('CVE-'))
+    else:
+      open_cve = []
+    self.open_cve = str(len(open_cve))
 
   def get_risk_index(self):
     # If no homepage, add a point
@@ -320,10 +329,14 @@ class Oss_Package(object):
     else:
       self.language_points = 0
     # Add points depending on number of CVEs
-    self.CVE_points = (
-      {'0': 0, '1': 1, '2': 2, '3': 2}.get(self.cve_since_2010, 3))
+    #self.CVE_points = (
+    #{'0': 0, '1': 1, '2': 2, '3': 2}.get(self.cve_since_2010, 3))
+    self.CVE_points = int(self.cve_since_2010)
+    if self.CVE_points > 20:
+      self.CVE_points = 20
+    self.CVE_points += int(self.open_cve) * 5
     # Add points depending on number of recent contributors
-    self.recent_contributor_points = {'0': 5, '1': 4, '2': 4, '3': 4, '': 2}.\
+    self.recent_contributor_points = {'0': 10, '1': 4, '2': 4, '3': 4, '': 2}.\
         get(self.twelve_month_contributor_count, 0)
     # 2 points if in the top 1 percent.  1 point if in the top 5 percent
     if int(self.popularity['rank']) <= int(popularity_threshold['one_percent']):
@@ -414,7 +427,7 @@ def main():
   with open('results.csv', 'w') as csvfile:
     headerwriter = csv.writer(csvfile, delimiter=',')
     headerwriter.writerow(['project_name', 'debian_source', 'debian_version',
-      'debian_desc', 'debian_home', 'CVE_since_2010', 'CVE_page',
+      'debian_desc', 'debian_home', 'CVE_since_2010', 'open_CVE', 'CVE_page',
       'openhub_page', 'openhub_name', 'openhub_desc', 'openhub_home',
       'openhub_download',
       'twelve_month_contributor_count', 'total_contributor_count',
@@ -430,7 +443,7 @@ def main():
   resultwriter = csv.writer(csvfile, delimiter=',')
   for p in package_list:
     row = [p.package_name, p.debian_source, p.debian_version,
-      p.debian_desc, p.debian_home, p.cve_since_2010, p.cve_page,
+      p.debian_desc, p.debian_home, p.cve_since_2010, p.open_cve, p.cve_page,
       p.openhub_page, p.openhub_name, p.openhub_desc, p.openhub_home,
       p.openhub_download,
       p.twelve_month_contributor_count, p.total_contributor_count,
